@@ -8,6 +8,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Tourze\DoctrineEntityCheckerBundle\Checker\EntityCheckerInterface;
 use Tourze\DoctrineSnowflakeBundle\Attribute\SnowflakeColumn;
@@ -20,7 +21,7 @@ use Tourze\DoctrineSnowflakeBundle\Service\Snowflake;
 class SnowflakeListener implements EntityCheckerInterface
 {
     public function __construct(
-        private readonly PropertyAccessor $propertyAccessor,
+        #[Autowire(service: 'doctrine-snowflake.property-accessor')] private readonly PropertyAccessor $propertyAccessor,
         private readonly Snowflake $snowflake,
         private readonly ?LoggerInterface $logger = null,
     ) {
