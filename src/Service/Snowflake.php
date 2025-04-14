@@ -24,7 +24,7 @@ class Snowflake
      */
     private static array $generators = [];
 
-    private static function getGenerator(int $datacenter = -1, int $workerId = -1, ?SequenceResolver $resolver = null): BaseSnowflake
+    public static function getGenerator(int $datacenter = -1, int $workerId = -1, ?SequenceResolver $resolver = null): BaseSnowflake
     {
         $key = "{$datacenter}-{$workerId}";
         if (!isset(static::$generators[$key])) {
@@ -56,7 +56,7 @@ class Snowflake
      * @param int $maxWorkerId 最大机器ID，通常是机器ID的位数对应的最大值
      * @return int 生成的机器ID
      */
-    private static function generateWorkerId(string $hostname, int $maxWorkerId = 31): int
+    public static function generateWorkerId(string $hostname, int $maxWorkerId = 31): int
     {
         // 将主机名转换为一个哈希值
         $hash = crc32($hostname);
