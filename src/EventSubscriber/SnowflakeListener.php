@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Tourze\DoctrineEntityCheckerBundle\Checker\EntityCheckerInterface;
 use Tourze\DoctrineSnowflakeBundle\Attribute\SnowflakeColumn;
-use Tourze\DoctrineSnowflakeBundle\Service\Snowflake;
+use Tourze\SnowflakeBundle\Service\Snowflake;
 
 /**
  * 在保存实体时，自动保存雪花ID值

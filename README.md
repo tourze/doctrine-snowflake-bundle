@@ -21,7 +21,7 @@ composer require tourze/doctrine-snowflake-bundle
 
 ## 使用方法 | Usage
 
-### 1. 在实体中使用 | Use in Entity
+在实体中使用 | Use in Entity
 
 ```php
 use Tourze\DoctrineSnowflakeBundle\Attribute\SnowflakeColumn;
@@ -32,25 +32,6 @@ class YourEntity
     private string $id;
 
     // ... 其他属性和方法
-}
-```
-
-### 2. 手动生成 ID | Generate ID Manually
-
-```php
-use Tourze\DoctrineSnowflakeBundle\Service\Snowflake;
-
-class YourService
-{
-    public function __construct(
-        private readonly Snowflake $snowflake,
-    ) {
-    }
-    
-    public function generateId(): string
-    {
-        return $this->snowflake->id();
-    }
 }
 ```
 
