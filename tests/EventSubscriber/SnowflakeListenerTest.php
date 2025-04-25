@@ -2,9 +2,9 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\EventSubscriber;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -71,7 +71,7 @@ class SnowflakeListenerTest extends TestCase
             );
 
         // 模拟ObjectManager和ClassMetadata
-        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager = $this->createMock(EntityManagerInterface::class);
         $metadata = $this->createMock(ClassMetadata::class);
 
         // 需要创建一个自定义的ReflectionClass，以便能正确识别私有属性
@@ -131,7 +131,7 @@ class SnowflakeListenerTest extends TestCase
             ->method('id');
 
         // 模拟ObjectManager和ClassMetadata
-        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager = $this->createMock(EntityManagerInterface::class);
         $metadata = $this->createMock(ClassMetadata::class);
 
         // 需要创建一个自定义的ReflectionClass，以便能正确识别私有属性
