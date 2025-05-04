@@ -13,6 +13,11 @@
 - [x] Bundle
   - [x] `DoctrineSnowflakeBundle` - 测试Bundle依赖
 
+## 集成测试完成情况
+
+- [x] 与Doctrine ORM的集成
+  - [x] `DoctrineSnowflakeIntegrationTest` - 测试实体保存时雪花ID的自动生成和保留现有ID
+
 ## 测试覆盖范围
 
 - 单元测试覆盖率：100%
@@ -27,11 +32,20 @@
 - 依赖注入测试：验证了 DoctrineSnowflakeExtension 正确注册所需服务
 - Bundle 测试：验证了 DoctrineSnowflakeBundle 的基本功能和依赖关系
 
+已添加集成测试：
+- 创建了与 Doctrine ORM 集成的测试环境
+- 实现了测试实体的自动 ID 生成和 ID 保留功能测试
+- 测试覆盖了 SnowflakeColumn 属性在完整 Doctrine 环境中的工作方式
+
+**注意**：运行集成测试需要在根项目中安装以下依赖：
+- doctrine/doctrine-bundle
+- symfony/string
+
 符合 unit-test 规范要求，composer.json 中已包含 phpunit/phpunit 和 symfony/phpunit-bridge 依赖。
 
 ## 未来测试计划
 
-- [ ] 添加集成测试，测试与Doctrine ORM的真实集成
+- [x] 添加集成测试，测试与Doctrine ORM的真实集成
 - [ ] 添加性能测试，验证在高并发情况下ID的生成速度和唯一性
 - [ ] 测试与Redis序列解析器的集成
 - [ ] 添加最大长度限制的验证测试

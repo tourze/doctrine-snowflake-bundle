@@ -14,6 +14,7 @@
     "symfony/framework-bundle": "^6.4",
     "symfony/property-access": "^6.4",
     "symfony/yaml": "^6.4 || ^7.1",
+    "symfony/string": "^6.4",
     "tourze/bundle-dependency": "0.0.*",
     "tourze/doctrine-entity-checker-bundle": "~0.0.8",
     "tourze/symfony-snowflake-bundle": "0.0.*",
