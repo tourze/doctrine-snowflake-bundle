@@ -43,6 +43,9 @@ class IntegrationTestKernel extends BaseKernel
             ],
             'orm' => [
                 'auto_generate_proxy_classes' => true,
+                'controller_resolver' => [
+                    'auto_mapping' => false,
+                ],
                 'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
                 'auto_mapping' => true,
                 'mappings' => [
