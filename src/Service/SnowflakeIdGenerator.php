@@ -20,11 +20,11 @@ use Tourze\SnowflakeBundle\Service\Snowflake;
 #[Autoconfigure(public: true)]
 class SnowflakeIdGenerator extends AbstractIdGenerator
 {
-    public function generateId(EntityManagerInterface $em, $entity): string
+    public function generateId(EntityManagerInterface $em, object|null $entity): string
     {
-        if (empty($entity->getId())) {
+        if (empty($entity?->getId())) {
             $generator = Snowflake::getGenerator(
-                static::generateDataCenterIdFromClassName(ClassUtils::getClass($entity)),
+                $entity ? static::generateDataCenterIdFromClassName(ClassUtils::getClass($entity)) : 0,
                 Snowflake::generateWorkerId(gethostname()),
             );
             return $generator->id();

@@ -3,15 +3,7 @@
 namespace Tourze\DoctrineSnowflakeBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Tourze\BundleDependency\BundleDependencyInterface;
-use Tourze\DoctrineEntityCheckerBundle\DoctrineEntityCheckerBundle;
 
-class DoctrineSnowflakeBundle extends Bundle implements BundleDependencyInterface
+class DoctrineSnowflakeBundle extends Bundle
 {
-    public static function getBundleDependencies(): array
-    {
-        return [
-            DoctrineEntityCheckerBundle::class => ['all' => true],
-        ];
-    }
 }
