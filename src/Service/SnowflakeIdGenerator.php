@@ -22,7 +22,17 @@ class SnowflakeIdGenerator extends AbstractIdGenerator
 {
     public function generateId(EntityManagerInterface $em, object|null $entity): string
     {
-        if (empty($entity?->getId())) {
+        try {
+            $emptyId = empty($entity?->getId());
+        } catch (\Throwable $exception) {
+            if (str_contains($exception->getMessage(), 'must not be accessed before initialization')) {
+                $emptyId = true;
+            } else {
+                throw $exception;
+            }
+        }
+
+        if ($emptyId) {
             $generator = Snowflake::getGenerator(
                 $entity ? static::generateDataCenterIdFromClassName(ClassUtils::getClass($entity)) : 0,
                 Snowflake::generateWorkerId(gethostname()),
