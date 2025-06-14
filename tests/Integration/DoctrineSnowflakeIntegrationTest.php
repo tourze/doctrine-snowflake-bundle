@@ -2,11 +2,15 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\Integration;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\SkippedWithMessageException;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tourze\DoctrineSnowflakeBundle\DoctrineSnowflakeBundle;
 use Tourze\DoctrineSnowflakeBundle\Tests\Integration\Entity\TestEntity;
+use Tourze\IntegrationTestKernel\IntegrationTestKernel;
+use Tourze\SnowflakeBundle\SnowflakeBundle;
 
 /**
  * 测试DoctrineSnowflakeBundle与Doctrine ORM的实际集成
@@ -23,6 +27,27 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
         return IntegrationTestKernel::class;
     }
 
+    protected static function createKernel(array $options = []): IntegrationTestKernel
+    {
+        $appendBundles = [
+            FrameworkBundle::class => ["all" => true],
+            DoctrineBundle::class => ["all" => true],
+            SnowflakeBundle::class => ["all" => true],
+            DoctrineSnowflakeBundle::class => ["all" => true],
+        ];
+        
+        $entityMappings = [
+            'Tourze\DoctrineSnowflakeBundle\Tests\Integration\Entity' => __DIR__ . '/Entity',
+        ];
+
+        return new IntegrationTestKernel(
+            $options['environment'] ?? 'test',
+            $options['debug'] ?? true,
+            $appendBundles,
+            $entityMappings
+        );
+    }
+
     protected function setUp(): void
     {
         // 检查依赖
@@ -36,11 +61,7 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
         $entityManager = $container->get('doctrine.orm.entity_manager');
         assert($entityManager instanceof EntityManagerInterface);
 
-        // 创建/更新数据库模式
-        $schemaTool = new SchemaTool($entityManager);
-        $metadatas = $entityManager->getMetadataFactory()->getAllMetadata();
-        $schemaTool->dropSchema($metadatas);
-        $schemaTool->createSchema($metadatas);
+        // 数据库模式由通用内核自动创建
     }
 
     /**
