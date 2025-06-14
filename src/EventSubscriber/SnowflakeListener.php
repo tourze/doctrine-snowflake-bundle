@@ -56,7 +56,11 @@ class SnowflakeListener implements EntityCheckerInterface
                 }
 
                 $idValue = $this->snowflake->id();
-                $idValue = trim($idValue);
+                $idValue = trim($idValue ?? '');
+                if (empty($idValue)) {
+                    continue;
+                }
+                
                 if ($attribute->prefix) {
                     $idValue = "{$attribute->prefix}{$idValue}";
                 }
