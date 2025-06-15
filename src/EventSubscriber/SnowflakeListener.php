@@ -65,7 +65,7 @@ class SnowflakeListener implements EntityCheckerInterface
                     $idValue = "{$attribute->prefix}{$idValue}";
                 }
 
-                if ($attribute->length > 0) {
+                if ($attribute->length > 0 && $idValue !== null) {
                     $idValue = substr($idValue, 0, $attribute->length);
                 }
 
