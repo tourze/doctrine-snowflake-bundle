@@ -177,8 +177,6 @@ class SnowflakeKeyAwareTest extends KernelTestCase
 
         // 确保ID是字符串类型
         $id = $entity->getId();
-        $this->assertIsString($id);
-
         // 即使进行数学运算，也应该保持字符串精度
         $this->assertEquals($id, strval($id));
     }

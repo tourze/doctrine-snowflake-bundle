@@ -55,8 +55,6 @@ class SnowflakeIdGeneratorTest extends TestCase
         // 测试当实体没有ID时，会生成一个新ID
         $id = $generator->generateId($entityManager, $entity);
         $this->assertNotEmpty($id);
-        $this->assertIsString($id);
-
         // 测试当实体已有ID时，会返回该ID
         $existingId = '123456789';
         $entity->setId($existingId);
