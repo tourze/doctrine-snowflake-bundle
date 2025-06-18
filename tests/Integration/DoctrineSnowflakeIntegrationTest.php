@@ -4,6 +4,7 @@ namespace Tourze\DoctrineSnowflakeBundle\Tests\Integration;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\SkippedWithMessageException;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tourze\DoctrineSnowflakeBundle\DoctrineSnowflakeBundle;
@@ -65,6 +66,8 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
 
     /**
      * 检查测试所需的依赖
+     * 
+     * @throws SkippedWithMessageException 如果依赖缺失则抛出此异常
      */
     private function checkDependencies(): void
     {

@@ -76,7 +76,7 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 创建新实体
         $entity = new SnowflakeKeyAwareTestEntity();
@@ -103,7 +103,7 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 创建实体并预设ID
         $entity = new SnowflakeKeyAwareTestEntity();
@@ -134,7 +134,7 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         $ids = [];
 
@@ -167,7 +167,7 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         $entity = new SnowflakeKeyAwareTestEntity();
         $entity->setName('字符串ID测试');
@@ -190,7 +190,7 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 获取实体元数据
         $metadata = $entityManager->getClassMetadata(SnowflakeKeyAwareTestEntity::class);
