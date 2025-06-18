@@ -61,7 +61,7 @@ class SnowflakeListener implements EntityCheckerInterface
                     continue;
                 }
                 
-                if ($attribute->prefix) {
+                if (!empty($attribute->prefix)) {
                     $idValue = "{$attribute->prefix}{$idValue}";
                 }
 
