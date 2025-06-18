@@ -15,9 +15,6 @@ class SnowflakeKeyAwareTestEntity implements \Stringable
 {
     use SnowflakeKeyAware;
 
-    /**
-     * 实体名称
-     */
     #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '实体名称'])]
     private string $name = '';
 
