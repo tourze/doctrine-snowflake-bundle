@@ -58,7 +58,7 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
 
         // 获取实体管理器
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 数据库模式由通用内核自动创建
     }
@@ -75,7 +75,7 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
         // 获取容器和实体管理器
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 创建测试实体
         $entity = new TestEntity();
@@ -109,7 +109,7 @@ class DoctrineSnowflakeIntegrationTest extends KernelTestCase
         // 获取容器和实体管理器
         $container = static::getContainer();
         $entityManager = $container->get('doctrine.orm.entity_manager');
-        assert($entityManager instanceof EntityManagerInterface);
+        $this->assertInstanceOf(EntityManagerInterface::class, $entityManager);
 
         // 创建测试实体并预设ID
         $entity = new TestEntity();

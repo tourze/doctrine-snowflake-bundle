@@ -2,6 +2,7 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\Traits\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 
@@ -9,15 +10,15 @@ use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
  * 测试使用 SnowflakeKeyAware trait 的实体
  */
 #[ORM\Entity]
-#[ORM\Table(name: 'snowflake_key_aware_test_entity')]
-class SnowflakeKeyAwareTestEntity
+#[ORM\Table(name: 'snowflake_key_aware_test_entity', options: ['comment' => '雪花ID测试实体'])]
+class SnowflakeKeyAwareTestEntity implements \Stringable
 {
     use SnowflakeKeyAware;
 
     /**
      * 实体名称
      */
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '实体名称'])]
     private string $name = '';
 
     public function getName(): string
@@ -29,5 +30,10 @@ class SnowflakeKeyAwareTestEntity
     {
         $this->name = $name;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?: 'SnowflakeKeyAwareTestEntity';
     }
 }
