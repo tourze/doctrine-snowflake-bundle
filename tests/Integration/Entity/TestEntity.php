@@ -45,6 +45,6 @@ class TestEntity implements \Stringable
 
     public function __toString(): string
     {
-        return $this->name ?: 'TestEntity';
+        return $this->name !== '' ? $this->name : 'TestEntity';
     }
 } 

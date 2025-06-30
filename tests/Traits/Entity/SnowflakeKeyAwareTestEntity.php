@@ -31,6 +31,6 @@ class SnowflakeKeyAwareTestEntity implements \Stringable
 
     public function __toString(): string
     {
-        return $this->name ?: 'SnowflakeKeyAwareTestEntity';
+        return $this->name !== '' ? $this->name : 'SnowflakeKeyAwareTestEntity';
     }
 }

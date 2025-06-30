@@ -5,7 +5,7 @@ namespace Tourze\DoctrineSnowflakeBundle\Attribute;
 /**
  * 标记字段自动生成雪花算法ID
  *
- * 我们不应该在 id 主键上使用这个注解，雪花id主键应使用 `#[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]`
+ * 我们不应该在 id 主键上使用这个注解，雪花id主键应使用 `#[ORM\CustomIdGenerator(class: SnowflakeIdGenerator::class)]`
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class SnowflakeColumn

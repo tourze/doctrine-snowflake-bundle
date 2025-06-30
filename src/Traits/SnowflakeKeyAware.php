@@ -15,11 +15,14 @@ use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
  */
 trait SnowflakeKeyAware
 {
+    /**
+     * @var string|null 这个默认值绝对不能设置为字符串或整型0，只能为null，否则无法判断是否无值
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
+    #[ORM\CustomIdGenerator(class: SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = '0';
+    private ?string $id = null;
 
     public function getId(): ?string
     {

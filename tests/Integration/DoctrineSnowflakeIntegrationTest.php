@@ -13,7 +13,7 @@ use Tourze\SnowflakeBundle\SnowflakeBundle;
 
 /**
  * 测试DoctrineSnowflakeBundle与Doctrine ORM的实际集成
- * 
+ *
  * 注意: 运行此测试需要在全局项目中安装以下依赖:
  * - doctrine/doctrine-bundle
  * - symfony/string

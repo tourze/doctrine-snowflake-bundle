@@ -16,7 +16,7 @@ use Tourze\SnowflakeBundle\Service\Snowflake;
  *
  * @see https://blog.csdn.net/helen920318/article/details/104952814
  */
-#[AutoconfigureTag('doctrine.id_generator')]
+#[AutoconfigureTag(name: 'doctrine.id_generator')]
 #[Autoconfigure(public: true)]
 class SnowflakeIdGenerator extends AbstractIdGenerator
 {

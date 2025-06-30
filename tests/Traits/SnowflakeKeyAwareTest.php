@@ -49,8 +49,8 @@ class SnowflakeKeyAwareTest extends KernelTestCase
     {
         $entity = new SnowflakeKeyAwareTestEntity();
 
-        // 验证初始ID为'0'
-        $this->assertEquals('0', $entity->getId());
+        // 验证初始ID为null
+        $this->assertNull($entity->getId());
     }
 
     /**
