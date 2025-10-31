@@ -26,7 +26,7 @@
     "symfony/string": "^7.3",
     "symfony/yaml": "^7.3",
     "tourze/bundle-dependency": "1.*",
-    "tourze/doctrine-entity-checker-bundle": "~0.0.8",
+    "tourze/doctrine-entity-checker-bundle": "1.0.*",
     "tourze/easy-admin-menu-bundle": "0.1.*",
     "tourze/symfony-dependency-service-loader": "1.*",
     "tourze/symfony-snowflake-bundle": "0.0.*"
