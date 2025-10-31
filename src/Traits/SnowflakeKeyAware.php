@@ -26,12 +26,12 @@ trait SnowflakeKeyAware
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
     protected ?string $id = null;
 
-    public function getId(): ?string
+    final public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(?string $id): void
+    final public function setId(?string $id): void
     {
         $this->id = $id;
     }
