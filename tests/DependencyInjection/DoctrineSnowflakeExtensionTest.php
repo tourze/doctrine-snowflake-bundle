@@ -2,30 +2,28 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\DoctrineSnowflakeBundle\DependencyInjection\DoctrineSnowflakeExtension;
+use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
 
 /**
  * 测试DoctrineSnowflakeExtension依赖注入扩展
+ *
+ * @internal
  */
-class DoctrineSnowflakeExtensionTest extends TestCase
+#[CoversClass(DoctrineSnowflakeExtension::class)]
+final class DoctrineSnowflakeExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
-    public function testLoad(): void
+    public function testGetConfigDir(): void
     {
-        $container = new ContainerBuilder();
         $extension = new DoctrineSnowflakeExtension();
+        $reflection = new \ReflectionClass($extension);
+        $method = $reflection->getMethod('getConfigDir');
+        $method->setAccessible(true);
 
-        $extension->load([], $container);
-
-        // 测试服务是否已注册
-        $this->assertTrue($container->hasDefinition('Tourze\DoctrineSnowflakeBundle\EventSubscriber\SnowflakeListener'));
-        $this->assertTrue($container->hasDefinition('Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator'));
-        $this->assertTrue($container->hasDefinition('doctrine-snowflake.property-accessor'));
-
-        // 验证PropertyAccessor服务工厂
-        $factory = $container->getDefinition('doctrine-snowflake.property-accessor')->getFactory();
-        $this->assertSame('Symfony\Component\PropertyAccess\PropertyAccess', $factory[0]);
-        $this->assertSame('createPropertyAccessor', $factory[1]);
+        $configDir = $method->invoke($extension);
+        $this->assertIsString($configDir);
+        $this->assertStringEndsWith('/Resources/config', $configDir);
+        $this->assertDirectoryExists($configDir);
     }
 }

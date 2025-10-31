@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\DoctrineSnowflakeBundle\Traits;
 
 use Doctrine\DBAL\Types\Types;
@@ -22,7 +24,7 @@ trait SnowflakeKeyAware
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     public function getId(): ?string
     {

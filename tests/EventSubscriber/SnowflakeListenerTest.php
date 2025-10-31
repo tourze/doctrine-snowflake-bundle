@@ -2,181 +2,220 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\EventSubscriber;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use ReflectionClass;
-use ReflectionProperty;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Doctrine\Persistence\ObjectManager;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Tourze\DoctrineEntityCheckerBundle\Checker\EntityCheckerInterface;
 use Tourze\DoctrineSnowflakeBundle\Attribute\SnowflakeColumn;
 use Tourze\DoctrineSnowflakeBundle\EventSubscriber\SnowflakeListener;
-use Tourze\SnowflakeBundle\Service\Snowflake;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractEventSubscriberTestCase;
 
 /**
  * 测试SnowflakeListener事件订阅者
+ *
+ * @internal
  */
-class SnowflakeListenerTest extends TestCase
+#[CoversClass(SnowflakeListener::class)]
+#[RunTestsInSeparateProcesses]
+final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
 {
     private SnowflakeListener $listener;
-    private Snowflake|MockObject $snowflake;
-    private PropertyAccessor|MockObject $propertyAccessor;
-    private LoggerInterface|MockObject $logger;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        // 创建模拟对象
-        $this->snowflake = $this->createMock(Snowflake::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
+        $container = self::getContainer();
+        $listener = $container->get(SnowflakeListener::class);
+        $this->assertInstanceOf(SnowflakeListener::class, $listener);
+        $this->listener = $listener;
+    }
 
-        $this->listener = new SnowflakeListener(
-            $this->propertyAccessor,
-            $this->snowflake,
-            $this->logger
-        );
+    /**
+     * 创建测试实体对象
+     *
+     * 使用简单匿名类，通过 phpstan-ignore 解决类型安全问题
+     * 保持测试的真实性，能够测试实际的业务逻辑
+     *
+     * @return object 具有测试所需方法的匿名类实例
+     */
+    private function createTestEntity(): object
+    {
+        return new class {
+            #[SnowflakeColumn(prefix: 'TEST_')]
+            private ?string $snowflakeId = null;
+
+            public function getSnowflakeId(): ?string
+            {
+                return $this->snowflakeId;
+            }
+
+            public function setSnowflakeId(?string $snowflakeId): void
+            {
+                $this->snowflakeId = $snowflakeId;
+            }
+
+            public function setName(?string $name): void
+            {
+                // 简化实现，只保留测试需要的功能
+            }
+        };
+    }
+
+    public function testClassImplementsCorrectInterfaces(): void
+    {
+        $this->assertInstanceOf(EntityCheckerInterface::class, $this->listener);
     }
 
     public function testPrePersist(): void
     {
-        // 创建测试实体
-        $entity = new TestEntity();
+        // 创建测试实体实例
+        $entity = $this->createTestEntity();
 
-        // 确保没有初始ID值
-        $entity->setId('');
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setName('test_name_' . uniqid());
 
-        // 模拟Snowflake返回ID
-        $this->snowflake
-            ->method('id')
-            ->willReturn('123456789');
+        // 确保雪花ID初始为空
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertNull($entity->getSnowflakeId());
 
-        // 模拟PropertyAccessor行为
-        $this->propertyAccessor
-            ->method('isWritable')
-            ->willReturn(true);
-
-        // 期望PropertyAccessor.setValue被调用，并捕获生成的ID值
-        $this->propertyAccessor
-            ->expects($this->once())
-            ->method('setValue')
-            ->with(
-                $this->identicalTo($entity),
-                $this->equalTo('id'),
-                $this->callback(function ($arg) {
-                    $this->assertStringStartsWith('TEST_', $arg);
-                    return true;
-                })
-            );
-
-        // 模拟ObjectManager和ClassMetadata
-        $objectManager = $this->createMock(EntityManagerInterface::class);
+        // 创建模拟的ObjectManager，不依赖EntityManager的元数据
+        $objectManager = $this->createMock(ObjectManager::class);
         $metadata = $this->createMock(ClassMetadata::class);
 
-        // 需要创建一个自定义的ReflectionClass，以便能正确识别私有属性
-        $reflectionClass = new class(TestEntity::class) extends ReflectionClass {
-            public function getProperties($filter = null): array
-            {
-                if ($filter === ReflectionProperty::IS_PRIVATE) {
-                    // 返回我们的测试属性
-                    $property = new ReflectionProperty(TestEntity::class, 'id');
-                    return [$property];
-                }
-                return parent::getProperties($filter);
-            }
-        };
+        // 创建反射类并返回具有SnowflakeColumn属性的属性
+        $reflectionClass = new \ReflectionClass($entity);
+        $metadata->method('getReflectionClass')->willReturn($reflectionClass);
+        $objectManager->method('getClassMetadata')->willReturn($metadata);
 
-        $metadata->method('getReflectionClass')
-            ->willReturn($reflectionClass);
+        // 直接测试prePersistEntity方法
+        $this->listener->prePersistEntity($objectManager, $entity);
 
-        $objectManager->method('getClassMetadata')
-            ->with(TestEntity::class)
-            ->willReturn($metadata);
+        // 验证雪花ID已被正确设置
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertNotNull($entity->getSnowflakeId());
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertIsString($entity->getSnowflakeId());
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertNotEmpty($entity->getSnowflakeId());
 
-        // 设置logger记录期望
-        $this->logger->expects($this->once())
-            ->method('debug')
-            ->with(
-                $this->stringContains('分配雪花算法ID'),
-                $this->arrayHasKey('id')
-            );
+        // 验证ID是雪花算法生成的，且有前缀
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertStringStartsWith('TEST_', $entity->getSnowflakeId());
 
-        // 创建PrePersistEventArgs
-        $args = new PrePersistEventArgs($entity, $objectManager);
-
-        // 执行测试方法
-        $this->listener->prePersist($args);
+        // 去掉前缀后应该是纯数字
+        // @phpstan-ignore-next-line method.notFound
+        $snowflakeValue = substr($entity->getSnowflakeId(), 5); // 去掉 'TEST_' 前缀
+        $this->assertMatchesRegularExpression('/^\d+$/', $snowflakeValue);
     }
 
     public function testPrePersistWithExistingId(): void
     {
-        // 创建测试实体并设置已有ID
-        $entity = new TestEntity();
-        $entity->setId('EXISTING_ID');
+        // 创建测试实体实例并设置已有雪花ID
+        $entity = $this->createTestEntity();
 
-        // 模拟PropertyAccessor行为
-        $this->propertyAccessor
-            ->method('isWritable')
-            ->willReturn(true);
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setName('test_name_existing_' . uniqid());
 
-        // setValue不应该被调用，因为ID已存在
-        $this->propertyAccessor
-            ->expects($this->never())
-            ->method('setValue');
+        // 手动设置一个已存在的雪花ID
+        $existingSnowflakeId = 'TEST_123456789012345678';
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setSnowflakeId($existingSnowflakeId);
 
-        // Snowflake不应被调用
-        $this->snowflake
-            ->expects($this->never())
-            ->method('id');
+        // 确认雪花ID已设置
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
 
-        // 模拟ObjectManager和ClassMetadata
-        $objectManager = $this->createMock(EntityManagerInterface::class);
+        // 创建模拟的ObjectManager
+        $objectManager = $this->createMock(ObjectManager::class);
         $metadata = $this->createMock(ClassMetadata::class);
 
-        // 需要创建一个自定义的ReflectionClass，以便能正确识别私有属性
-        $reflectionClass = new class(TestEntity::class) extends ReflectionClass {
-            public function getProperties($filter = null): array
-            {
-                if ($filter === ReflectionProperty::IS_PRIVATE) {
-                    // 返回我们的测试属性
-                    $property = new ReflectionProperty(TestEntity::class, 'id');
-                    return [$property];
-                }
-                return parent::getProperties($filter);
-            }
-        };
+        $reflectionClass = new \ReflectionClass($entity);
+        $metadata->method('getReflectionClass')->willReturn($reflectionClass);
+        $objectManager->method('getClassMetadata')->willReturn($metadata);
 
-        $metadata->method('getReflectionClass')
-            ->willReturn($reflectionClass);
+        // 直接测试prePersistEntity方法
+        $this->listener->prePersistEntity($objectManager, $entity);
 
-        $objectManager->method('getClassMetadata')
-            ->with(TestEntity::class)
-            ->willReturn($metadata);
-
-        // 创建PrePersistEventArgs
-        $args = new PrePersistEventArgs($entity, $objectManager);
-
-        // 执行测试方法
-        $this->listener->prePersist($args);
-    }
-}
-
-/**
- * 仅用于测试的实体类
- */
-class TestEntity
-{
-    #[SnowflakeColumn(prefix: 'TEST_', length: 32)]
-    private string $id = '';
-
-    public function getId(): string
-    {
-        return $this->id;
+        // 验证雪花ID保持不变（不会覆盖已存在的ID）
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
     }
 
-    public function setId(string $id): void
+    public function testPrePersistEntityDirectly(): void
     {
-        $this->id = $id;
+        // 直接测试prePersistEntity方法
+        $entity = $this->createTestEntity();
+
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertNull($entity->getSnowflakeId());
+
+        // 创建模拟的ObjectManager
+        $objectManager = $this->createMock(ObjectManager::class);
+        $metadata = $this->createMock(ClassMetadata::class);
+
+        $reflectionClass = new \ReflectionClass($entity);
+        $metadata->method('getReflectionClass')->willReturn($reflectionClass);
+        $objectManager->method('getClassMetadata')->willReturn($metadata);
+
+        // 直接调用prePersistEntity方法
+        $this->listener->prePersistEntity($objectManager, $entity);
+
+        // 验证雪花ID已被正确设置
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertNotNull($entity->getSnowflakeId());
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertStringStartsWith('TEST_', $entity->getSnowflakeId());
+    }
+
+    public function testPreUpdateEntityDirectly(): void
+    {
+        // 直接测试preUpdateEntity方法（该方法应该什么都不做）
+        $entity = $this->createTestEntity();
+        $existingSnowflakeId = 'TEST_987654321098765432';
+
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setSnowflakeId($existingSnowflakeId);
+
+        // 创建模拟的ObjectManager和PreUpdateEventArgs
+        $objectManager = $this->createMock(ObjectManager::class);
+        $eventArgs = $this->createMock(PreUpdateEventArgs::class);
+
+        // 直接调用preUpdateEntity方法
+        $this->listener->preUpdateEntity($objectManager, $entity, $eventArgs);
+
+        // 验证雪花ID保持不变（更新时不处理ID）
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
+    }
+
+    public function testListenerOnlyHandlesPrePersist(): void
+    {
+        // 验证监听器只处理prePersist事件
+        $entity = $this->createTestEntity();
+
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setName('test_name_update_' . uniqid());
+
+        // 设置一个已存在的雪花ID
+        $existingSnowflakeId = 'TEST_987654321098765432';
+        // @phpstan-ignore-next-line method.notFound
+        $entity->setSnowflakeId($existingSnowflakeId);
+
+        // 确认雪花ID已设置
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
+
+        // 创建模拟的ObjectManager和PreUpdateEventArgs
+        $objectManager = $this->createMock(ObjectManager::class);
+        $changeSet = [];
+        $eventArgs = $this->createMock(PreUpdateEventArgs::class);
+
+        // 直接调用preUpdateEntity方法（该方法什么都不做）
+        $this->listener->preUpdateEntity($objectManager, $entity, $eventArgs);
+
+        // 验证雪花ID保持不变（更新时不处理ID）
+        // @phpstan-ignore-next-line method.notFound
+        $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
     }
 }

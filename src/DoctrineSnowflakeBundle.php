@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\DoctrineSnowflakeBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;

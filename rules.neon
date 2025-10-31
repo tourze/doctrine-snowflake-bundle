@@ -1,0 +1,5 @@
+services:
+    -
+        class: Tourze\DoctrineSnowflakeBundle\PHPStan\Rules\UseSnowflakeKeyAwareTraitRule
+        tags:
+            - phpstan.rules.rule

@@ -2,13 +2,17 @@
 
 namespace Tourze\DoctrineSnowflakeBundle\Tests\Attribute;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\DoctrineSnowflakeBundle\Attribute\SnowflakeColumn;
 
 /**
  * 测试SnowflakeColumn属性类
+ *
+ * @internal
  */
-class SnowflakeColumnTest extends TestCase
+#[CoversClass(SnowflakeColumn::class)]
+final class SnowflakeColumnTest extends TestCase
 {
     public function testConstructor(): void
     {

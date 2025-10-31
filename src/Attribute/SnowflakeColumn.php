@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\DoctrineSnowflakeBundle\Attribute;
 
 /**
@@ -7,7 +9,7 @@ namespace Tourze\DoctrineSnowflakeBundle\Attribute;
  *
  * 我们不应该在 id 主键上使用这个注解，雪花id主键应使用 `#[ORM\CustomIdGenerator(class: SnowflakeIdGenerator::class)]`
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY)]
+#[\Attribute(flags: \Attribute::TARGET_PROPERTY)]
 class SnowflakeColumn
 {
     public function __construct(
