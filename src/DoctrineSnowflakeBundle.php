@@ -7,6 +7,7 @@ namespace Tourze\DoctrineSnowflakeBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tourze\BundleDependency\BundleDependencyInterface;
+use Tourze\EasyAdminMenuBundle\EasyAdminMenuBundle;
 use Tourze\SnowflakeBundle\SnowflakeBundle;
 
 class DoctrineSnowflakeBundle extends Bundle implements BundleDependencyInterface
@@ -16,6 +17,7 @@ class DoctrineSnowflakeBundle extends Bundle implements BundleDependencyInterfac
         return [
             DoctrineBundle::class => ['all' => true],
             SnowflakeBundle::class => ['all' => true],
+            EasyAdminMenuBundle::class => ['all' => true],
         ];
     }
 }
