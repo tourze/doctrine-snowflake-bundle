@@ -7,7 +7,7 @@ namespace Tourze\DoctrineSnowflakeBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class DoctrineSnowflakeExtension extends AutoExtension
+final class DoctrineSnowflakeExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {

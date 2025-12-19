@@ -47,12 +47,10 @@ final class SnowflakeKeyAwareTest extends TestCase
         $entity = $this->createTestEntity();
 
         // 设置ID
-        // @phpstan-ignore-next-line method.notFound
         $entity->setId('123456789');
         $this->assertEquals('123456789', $entity->getId());
 
         // 设置 null
-        // @phpstan-ignore-next-line method.notFound
         $entity->setId(null);
         $this->assertNull($entity->getId());
     }
@@ -69,12 +67,10 @@ final class SnowflakeKeyAwareTest extends TestCase
 
         // 测试设置和获取
         $testId = 'test_snowflake_id_123';
-        // @phpstan-ignore-next-line method.notFound
         $entity->setId($testId);
         $this->assertEquals($testId, $entity->getId());
 
         // 测试设置不同的值
-        // @phpstan-ignore-next-line method.notFound
         $entity->setId('another_id');
         $this->assertEquals('another_id', $entity->getId());
     }

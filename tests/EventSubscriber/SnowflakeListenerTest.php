@@ -71,12 +71,9 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
     {
         // 创建测试实体实例
         $entity = $this->createTestEntity();
-
-        // @phpstan-ignore-next-line method.notFound
         $entity->setName('test_name_' . uniqid());
 
         // 确保雪花ID初始为空
-        // @phpstan-ignore-next-line method.notFound
         $this->assertNull($entity->getSnowflakeId());
 
         // 创建模拟的ObjectManager，不依赖EntityManager的元数据
@@ -92,19 +89,14 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         $this->listener->prePersistEntity($objectManager, $entity);
 
         // 验证雪花ID已被正确设置
-        // @phpstan-ignore-next-line method.notFound
         $this->assertNotNull($entity->getSnowflakeId());
-        // @phpstan-ignore-next-line method.notFound
         $this->assertIsString($entity->getSnowflakeId());
-        // @phpstan-ignore-next-line method.notFound
         $this->assertNotEmpty($entity->getSnowflakeId());
 
         // 验证ID是雪花算法生成的，且有前缀
-        // @phpstan-ignore-next-line method.notFound
         $this->assertStringStartsWith('TEST_', $entity->getSnowflakeId());
 
         // 去掉前缀后应该是纯数字
-        // @phpstan-ignore-next-line method.notFound
         $snowflakeValue = substr($entity->getSnowflakeId(), 5); // 去掉 'TEST_' 前缀
         $this->assertMatchesRegularExpression('/^\d+$/', $snowflakeValue);
     }
@@ -113,17 +105,13 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
     {
         // 创建测试实体实例并设置已有雪花ID
         $entity = $this->createTestEntity();
-
-        // @phpstan-ignore-next-line method.notFound
         $entity->setName('test_name_existing_' . uniqid());
 
         // 手动设置一个已存在的雪花ID
         $existingSnowflakeId = 'TEST_123456789012345678';
-        // @phpstan-ignore-next-line method.notFound
         $entity->setSnowflakeId($existingSnowflakeId);
 
         // 确认雪花ID已设置
-        // @phpstan-ignore-next-line method.notFound
         $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
 
         // 创建模拟的ObjectManager
@@ -138,7 +126,6 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         $this->listener->prePersistEntity($objectManager, $entity);
 
         // 验证雪花ID保持不变（不会覆盖已存在的ID）
-        // @phpstan-ignore-next-line method.notFound
         $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
     }
 
@@ -146,8 +133,6 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
     {
         // 直接测试prePersistEntity方法
         $entity = $this->createTestEntity();
-
-        // @phpstan-ignore-next-line method.notFound
         $this->assertNull($entity->getSnowflakeId());
 
         // 创建模拟的ObjectManager
@@ -162,9 +147,7 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         $this->listener->prePersistEntity($objectManager, $entity);
 
         // 验证雪花ID已被正确设置
-        // @phpstan-ignore-next-line method.notFound
         $this->assertNotNull($entity->getSnowflakeId());
-        // @phpstan-ignore-next-line method.notFound
         $this->assertStringStartsWith('TEST_', $entity->getSnowflakeId());
     }
 
@@ -173,8 +156,6 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         // 直接测试preUpdateEntity方法（该方法应该什么都不做）
         $entity = $this->createTestEntity();
         $existingSnowflakeId = 'TEST_987654321098765432';
-
-        // @phpstan-ignore-next-line method.notFound
         $entity->setSnowflakeId($existingSnowflakeId);
 
         // 创建模拟的ObjectManager和PreUpdateEventArgs
@@ -185,7 +166,6 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         $this->listener->preUpdateEntity($objectManager, $entity, $eventArgs);
 
         // 验证雪花ID保持不变（更新时不处理ID）
-        // @phpstan-ignore-next-line method.notFound
         $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
     }
 
@@ -193,17 +173,13 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
     {
         // 验证监听器只处理prePersist事件
         $entity = $this->createTestEntity();
-
-        // @phpstan-ignore-next-line method.notFound
         $entity->setName('test_name_update_' . uniqid());
 
         // 设置一个已存在的雪花ID
         $existingSnowflakeId = 'TEST_987654321098765432';
-        // @phpstan-ignore-next-line method.notFound
         $entity->setSnowflakeId($existingSnowflakeId);
 
         // 确认雪花ID已设置
-        // @phpstan-ignore-next-line method.notFound
         $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
 
         // 创建模拟的ObjectManager和PreUpdateEventArgs
@@ -215,7 +191,6 @@ final class SnowflakeListenerTest extends AbstractEventSubscriberTestCase
         $this->listener->preUpdateEntity($objectManager, $entity, $eventArgs);
 
         // 验证雪花ID保持不变（更新时不处理ID）
-        // @phpstan-ignore-next-line method.notFound
         $this->assertSame($existingSnowflakeId, $entity->getSnowflakeId());
     }
 }
